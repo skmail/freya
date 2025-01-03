@@ -73,13 +73,20 @@ pub struct TestingHandler<T: 'static + Clone> {
     pub(crate) cursor_icon: CursorIcon,
 }
 
+fn get_scale_factor(scale_factor: Option<f32>) -> f32{
+    if let Some(scale_factor) = scale_factor{
+        return scale_factor;
+    }
+    return SCALE_FACTOR as f32;
+}
 impl<T: 'static + Clone> TestingHandler<T> {
     /// Init the DOM.
     pub(crate) fn init_dom(&mut self) {
+        
         self.provide_vdom_contexts();
         let sdom = self.utils.sdom();
         let mut fdom = sdom.get();
-        fdom.init_dom(&mut self.vdom, SCALE_FACTOR as f32);
+        fdom.init_dom(&mut self.vdom, get_scale_factor(self.config.scale_factor));
     }
 
     /// Get a mutable reference to the current [`TestingConfig`].
@@ -209,7 +216,7 @@ impl<T: 'static + Clone> TestingHandler<T> {
             .utils
             .sdom()
             .get_mut()
-            .render_mutations(&mut self.vdom, SCALE_FACTOR as f32);
+            .render_mutations(&mut self.vdom, get_scale_factor(self.config.scale_factor));
 
         self.wait_for_work(self.config.size());
 
@@ -228,7 +235,7 @@ impl<T: 'static + Clone> TestingHandler<T> {
                 size,
             },
             &mut self.font_collection,
-            SCALE_FACTOR as f32,
+            get_scale_factor(self.config.scale_factor),
             &default_fonts(),
         );
 
@@ -249,7 +256,7 @@ impl<T: 'static + Clone> TestingHandler<T> {
             &mut self.events_queue,
             &self.event_emitter,
             &mut self.nodes_state,
-            SCALE_FACTOR,
+            get_scale_factor(self.config.scale_factor) as f64,
             self.accessibility_tree.lock().unwrap().focused_node_id(),
         );
     }
@@ -257,7 +264,7 @@ impl<T: 'static + Clone> TestingHandler<T> {
     fn measure_text_group(&self, text_measurement: TextGroupMeasurement) {
         let sdom = self.utils.sdom();
         sdom.get()
-            .measure_paragraphs(text_measurement, SCALE_FACTOR);
+            .measure_paragraphs(text_measurement, get_scale_factor(self.config.scale_factor) as f64);
     }
 
     /// Push an event to the events queue
@@ -340,7 +347,7 @@ impl<T: 'static + Clone> TestingHandler<T> {
             surface: &mut surface,
             dirty_surface: &mut dirty_surface,
             compositor: &mut compositor,
-            scale_factor: SCALE_FACTOR as f32,
+            scale_factor: get_scale_factor(self.config.scale_factor) as f32,
             selected_node: None,
             font_collection: &mut self.font_collection,
             font_manager: &self.font_mgr,
