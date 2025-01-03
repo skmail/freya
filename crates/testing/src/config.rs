@@ -9,6 +9,7 @@ pub struct TestingConfig<T: 'static + Clone> {
     pub size: Size2D,
     pub event_loop_ticker: bool,
     pub state: Option<T>,
+    pub scale_factor: Option<f32>
 }
 
 impl<T: 'static + Clone> Default for TestingConfig<T> {
@@ -18,6 +19,7 @@ impl<T: 'static + Clone> Default for TestingConfig<T> {
             size: Size2D::from((500.0, 500.0)),
             event_loop_ticker: true,
             state: None,
+            scale_factor: None
         }
     }
 }
